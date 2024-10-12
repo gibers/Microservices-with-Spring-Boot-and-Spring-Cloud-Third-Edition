@@ -1,7 +1,7 @@
 version: '2.1'
 
 services:
-  product:
+  product-prod:
     image: product-crac
     cap_add:
       - CHECKPOINT_RESTORE
@@ -9,8 +9,10 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+    volumes:
+      - "./config-repo/prod/product-configuration.yml:/runtime-configuration.yml"
 
-  recommendation:
+  recommendation-prod:
     image: recommendation-crac
     cap_add:
       - CHECKPOINT_RESTORE
@@ -18,8 +20,10 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+    volumes:
+      - "./config-repo/prod/recommendation-configuration.yml:/runtime-configuration.yml"
 
-  review:
+  review-prod:
     image: review-crac
     cap_add:
       - CHECKPOINT_RESTORE
@@ -27,14 +31,18 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    volumes:
+      - "./config-repo/prod/review-configuration.yml:/runtime-configuration.yml"
 
-  product-composite:
+  product-composite-prod:
     image: product-composite-crac
     cap_add:
       - CHECKPOINT_RESTORE
     mem_limit: 512m
     ports:
       - "8080:8080"
+    volumes:
+      - "./config-repo/prod/product-composite-configuration.yml:/runtime-configuration.yml"
 
   mongodb:
     image: mongo:6.0.4
@@ -55,11 +63,11 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=rootpwd
-      - MYSQL_DATABASE=review-db
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=pwd
+      - MYSQL_DATABASE=review-db-prod
+      - MYSQL_USER=user-prod
+      - MYSQL_PASSWORD=pwd-prod
     healthcheck:
-      test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
+      test: "/usr/bin/mysql --user=user-prod --password=pwd-prod --execute \"SHOW DATABASES;\""
       interval: 5s
       timeout: 2s
       retries: 60

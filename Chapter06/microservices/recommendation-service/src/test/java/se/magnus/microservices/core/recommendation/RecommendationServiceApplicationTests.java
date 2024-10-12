@@ -28,7 +28,7 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
   void setupDb() {
     repository.deleteAll();
   }
-  
+
   @Test
   void getRecommendationsByProductId() {
 
@@ -85,7 +85,7 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
 
     getAndVerifyRecommendationsByProductId("", BAD_REQUEST)
       .jsonPath("$.path").isEqualTo("/recommendation")
-      .jsonPath("$.message").isEqualTo("Required query parameter 'productId' is not present.");
+      .jsonPath("$.message").isEqualTo("Required parameter 'productId' is not present.");
   }
 
   @Test
@@ -93,7 +93,7 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
 
     getAndVerifyRecommendationsByProductId("?productId=no-integer", BAD_REQUEST)
       .jsonPath("$.path").isEqualTo("/recommendation")
-      .jsonPath("$.message").isEqualTo("Type mismatch.");
+      .jsonPath("$.message").isEqualTo("Failed to convert value of type 'java.lang.String' to required type 'int'; For input string: \"no-integer\"");
   }
 
   @Test
@@ -147,5 +147,5 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
       .expectStatus().isEqualTo(expectedStatus)
       .expectBody();
   }
-    
+
 }

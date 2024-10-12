@@ -1,0 +1,6 @@
+spring.datasource:
+  hikari:
+    allow-pool-suspension: true
+  url: jdbc:mysql://mysql/review-db-prod
+  username: user-prod
+  password: pwd-prod

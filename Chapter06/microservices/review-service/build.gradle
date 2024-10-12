@@ -10,6 +10,7 @@ sourceCompatibility = '21'
 
 ext {
     mapstructVersion = '1.5.5.Final'
+    springCloudVersion = '2023.0.1'
 }
 
 repositories {
@@ -29,6 +30,7 @@ dependencies {
     implementation 'com.mysql:mysql-connector-j'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation 'org.crac:crac'
+    implementation 'org.springframework.cloud:spring-cloud-starter'
 
     compileOnly "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
@@ -44,6 +46,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:mysql'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {

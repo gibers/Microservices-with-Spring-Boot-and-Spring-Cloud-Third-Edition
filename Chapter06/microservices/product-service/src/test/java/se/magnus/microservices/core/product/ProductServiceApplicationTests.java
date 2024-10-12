@@ -73,7 +73,7 @@ class ProductServiceApplicationTests extends MongoDbTestBase {
 
     getAndVerifyProduct("/no-integer", BAD_REQUEST)
       .jsonPath("$.path").isEqualTo("/product/no-integer")
-      .jsonPath("$.message").isEqualTo("Type mismatch.");
+      .jsonPath("$.message").isEqualTo("Failed to convert value of type 'java.lang.String' to required type 'int'; For input string: \"no-integer\"");
   }
 
   @Test

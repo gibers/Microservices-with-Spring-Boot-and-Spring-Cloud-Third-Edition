@@ -4,10 +4,10 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,7 +24,7 @@ class GlobalControllerExceptionHandler {
   @ResponseStatus(BAD_REQUEST)
   @ExceptionHandler(BadRequestException.class)
   public @ResponseBody HttpErrorInfo handleBadRequestExceptions(
-    ServerHttpRequest request, BadRequestException ex) {
+    HttpServletRequest request, NotFoundException ex) {
 
     return createHttpErrorInfo(BAD_REQUEST, request, ex);
   }
@@ -32,7 +32,7 @@ class GlobalControllerExceptionHandler {
   @ResponseStatus(NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
   public @ResponseBody HttpErrorInfo handleNotFoundExceptions(
-    ServerHttpRequest request, NotFoundException ex) {
+    HttpServletRequest request, NotFoundException ex) {
 
     return createHttpErrorInfo(NOT_FOUND, request, ex);
   }
@@ -40,15 +40,15 @@ class GlobalControllerExceptionHandler {
   @ResponseStatus(UNPROCESSABLE_ENTITY)
   @ExceptionHandler(InvalidInputException.class)
   public @ResponseBody HttpErrorInfo handleInvalidInputException(
-    ServerHttpRequest request, InvalidInputException ex) {
+    HttpServletRequest request, InvalidInputException ex) {
 
     return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
   }
 
   private HttpErrorInfo createHttpErrorInfo(
-    HttpStatus httpStatus, ServerHttpRequest request, Exception ex) {
+    HttpStatus httpStatus, HttpServletRequest request, Exception ex) {
 
-    final String path = request.getPath().pathWithinApplication().value();
+    final String path = request.getRequestURI();
     final String message = ex.getMessage();
 
     LOG.debug("Returning HTTP status: {} for path: {}, message: {}", httpStatus, path, message);

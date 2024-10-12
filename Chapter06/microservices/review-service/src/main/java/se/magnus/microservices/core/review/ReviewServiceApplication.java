@@ -19,8 +19,9 @@ public class ReviewServiceApplication implements Resource {
   public static void main(String[] args) {
     ConfigurableApplicationContext ctx = SpringApplication.run(ReviewServiceApplication.class, args);
 
-    String mysqlUri = ctx.getEnvironment().getProperty("spring.datasource.url");
-    LOG.info("Connected to MySQL: " + mysqlUri);
+    String mysqlUrl = ctx.getEnvironment().getProperty("spring.datasource.url");
+    String user = ctx.getEnvironment().getProperty("spring.datasource.username");
+    LOG.info("Connected user '{}' to MySQL db: {}", user, mysqlUrl);
   }
 
   public ReviewServiceApplication() {

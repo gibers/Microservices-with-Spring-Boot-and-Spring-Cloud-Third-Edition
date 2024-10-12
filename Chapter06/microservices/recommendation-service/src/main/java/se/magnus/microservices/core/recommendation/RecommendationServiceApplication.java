@@ -1,5 +1,6 @@
 package se.magnus.microservices.core.recommendation;
 
+import com.mongodb.client.MongoClient;
 import org.crac.Context;
 import org.crac.Core;
 import org.crac.Resource;
@@ -38,6 +39,9 @@ public class RecommendationServiceApplication implements Resource {
   @Autowired
   MongoOperations mongoTemplate;
 
+  @Autowired
+  private MongoClient mongoClient;
+
   @EventListener(ContextRefreshedEvent.class)
   public void initIndicesAfterStartup() {
 
@@ -55,9 +59,13 @@ public class RecommendationServiceApplication implements Resource {
   @Override
   public void beforeCheckpoint(Context<? extends Resource> context) {
     LOG.info("CRaC's beforeCheckpoint callback method called...");
+    LOG.info("- Shutting down the MongoClient...");
+    mongoClient.close();
+    LOG.info("- MongoClient closed.");
   }
 
   @Override
   public void afterRestore(Context<? extends Resource> context) {
     LOG.info("CRaC's afterRestore callback method called...");
-  }}
+  }
+}

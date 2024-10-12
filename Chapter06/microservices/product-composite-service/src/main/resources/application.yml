@@ -96,3 +96,12 @@ app:
   review-service:
     host: review
     port: 8080
+
+---
+spring.config.activate.on-profile: crac
+
+server.port: 8080
+
+spring:
+  application.name: product-composite
+  config.import: file:./runtime-configuration.yml

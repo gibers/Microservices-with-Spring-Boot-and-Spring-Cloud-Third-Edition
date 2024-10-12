@@ -89,7 +89,7 @@ class ReviewServiceApplicationTests extends MySqlTestBase {
 
     getAndVerifyReviewsByProductId("", BAD_REQUEST)
       .jsonPath("$.path").isEqualTo("/review")
-      .jsonPath("$.message").isEqualTo("Required query parameter 'productId' is not present.");
+      .jsonPath("$.message").isEqualTo("Required parameter 'productId' is not present.");
   }
 
   @Test
@@ -97,7 +97,7 @@ class ReviewServiceApplicationTests extends MySqlTestBase {
 
     getAndVerifyReviewsByProductId("?productId=no-integer", BAD_REQUEST)
       .jsonPath("$.path").isEqualTo("/review")
-      .jsonPath("$.message").isEqualTo("Type mismatch.");
+      .jsonPath("$.message").isEqualTo("Failed to convert value of type 'java.lang.String' to required type 'int'; For input string: \"no-integer\"");
   }
 
   @Test

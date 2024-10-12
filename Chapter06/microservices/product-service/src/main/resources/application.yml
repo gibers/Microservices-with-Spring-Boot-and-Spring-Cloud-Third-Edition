@@ -18,3 +18,24 @@ spring.config.activate.on-profile: docker
 server.port: 8080
 
 spring.data.mongodb.host: mongodb
+
+---
+spring.config.activate.on-profile: crac
+
+server.port: 8080
+
+spring.data.mongodb.host: mongodb
+
+# See https://github.com/spring-projects/spring-lifecycle-smoke-tests/tree/main/data/data-mongodb
+spring.data.mongodb.auto-index-creation: false
+
+spring:
+  application.name: product
+  cloud.refresh.extra-refreshable:
+    - com.mongodb.client.MongoClient
+  config.import: file:./runtime-configuration.yml
+
+management.endpoints.web.exposure.include:
+  - refresh
+  - health
+  - env

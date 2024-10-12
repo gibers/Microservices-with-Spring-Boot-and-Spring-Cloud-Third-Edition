@@ -59,11 +59,6 @@ public class ProductCompositeServiceApplication implements Resource {
         .url(apiExternalDocUrl));
   }
 
-  @Bean
-  RestTemplate restTemplate() {
-    return new RestTemplate();
-  }
-
   public static void main(String[] args) {
     SpringApplication.run(ProductCompositeServiceApplication.class, args);
   }
