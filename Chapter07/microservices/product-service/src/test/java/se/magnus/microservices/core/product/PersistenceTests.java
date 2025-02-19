@@ -3,14 +3,15 @@ package se.magnus.microservices.core.product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import reactor.test.StepVerifier;
 import se.magnus.microservices.core.product.persistence.ProductEntity;
 import se.magnus.microservices.core.product.persistence.ProductRepository;
 
-@DataMongoTest
+//@DataMongoTest
+@SpringBootTest
 class PersistenceTests extends MongoDbTestBase {
 
   @Autowired

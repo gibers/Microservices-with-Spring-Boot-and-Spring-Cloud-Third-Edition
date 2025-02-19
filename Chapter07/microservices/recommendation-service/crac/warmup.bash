@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SCRIPT_DIR/../../../crac/commons.bash
+
+waitForService curl http://localhost:8080/actuator/health
+
+for i in {1..3}; do
+  assertCurl 200 "curl -s localhost:8080/recommendation?productId=1"
+  assertEqual 3 $(echo $RESPONSE | jq length)
+done

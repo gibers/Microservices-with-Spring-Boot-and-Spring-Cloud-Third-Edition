@@ -1,5 +1,8 @@
 package se.magnus.microservices.core.review;
 
+import org.crac.Context;
+import org.crac.Core;
+import org.crac.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,7 @@ import reactor.core.scheduler.Schedulers;
 
 @SpringBootApplication
 @ComponentScan("se.magnus")
-public class ReviewServiceApplication {
+public class ReviewServiceApplication implements Resource {
 
   private static final Logger LOG = LoggerFactory.getLogger(ReviewServiceApplication.class);
 
@@ -28,7 +31,10 @@ public class ReviewServiceApplication {
   ) {
     this.threadPoolSize = threadPoolSize;
     this.taskQueueSize = taskQueueSize;
+
+    Core.getGlobalContext().register(this);
   }
+
 
   @Bean
   public Scheduler jdbcScheduler() {
@@ -39,7 +45,18 @@ public class ReviewServiceApplication {
   public static void main(String[] args) {
     ConfigurableApplicationContext ctx = SpringApplication.run(ReviewServiceApplication.class, args);
 
-    String mysqlUri = ctx.getEnvironment().getProperty("spring.datasource.url");
-    LOG.info("Connected to MySQL: " + mysqlUri);
+    String mysqlUrl = ctx.getEnvironment().getProperty("spring.datasource.url");
+    String user = ctx.getEnvironment().getProperty("spring.datasource.username");
+    LOG.info("Connected user '{}' to MySQL db: {}", user, mysqlUrl);
+  }
+
+  @Override
+  public void beforeCheckpoint(Context<? extends Resource> context) {
+    LOG.info("v1: CRaC's beforeCheckpoint callback method called...");
+  }
+
+  @Override
+  public void afterRestore(Context<? extends Resource> context) {
+    LOG.info("v1: CRaC's afterRestore callback method called...");
   }
 }

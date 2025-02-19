@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21.0.1_12-jre-jammy as builder
+FROM eclipse-temurin:21.0.1_12-jre-jammy AS builder
 WORKDIR extracted
 ADD ./build/libs/*.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract

@@ -1,0 +1,10 @@
+app:
+  product-service:
+    host: product-prod
+    port: 8080
+  recommendation-service:
+    host: recommendation-prod
+    port: 8080
+  review-service:
+    host: review-prod
+    port: 8080

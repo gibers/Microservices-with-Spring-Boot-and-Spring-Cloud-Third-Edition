@@ -1,5 +1,9 @@
 package se.magnus.microservices.core.recommendation;
 
+import com.mongodb.reactivestreams.client.MongoClient;
+import org.crac.Context;
+import org.crac.Core;
+import org.crac.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +24,7 @@ import se.magnus.microservices.core.recommendation.persistence.RecommendationEnt
 
 @SpringBootApplication
 @ComponentScan("se.magnus")
-public class RecommendationServiceApplication {
+public class RecommendationServiceApplication implements Resource {
 
   private static final Logger LOG = LoggerFactory.getLogger(RecommendationServiceApplication.class);
 
@@ -35,6 +39,9 @@ public class RecommendationServiceApplication {
   @Autowired
   ReactiveMongoOperations mongoTemplate;
 
+  @Autowired
+  private MongoClient mongoClient;
+
   @EventListener(ContextRefreshedEvent.class)
   public void initIndicesAfterStartup() {
 
@@ -43,5 +50,23 @@ public class RecommendationServiceApplication {
 
     ReactiveIndexOperations indexOps = mongoTemplate.indexOps(RecommendationEntity.class);
     resolver.resolveIndexFor(RecommendationEntity.class).forEach(e -> indexOps.ensureIndex(e).block());
+  }
+
+  public RecommendationServiceApplication() {
+    Core.getGlobalContext().register(this);
+  }
+
+  @Override
+  public void beforeCheckpoint(Context<? extends Resource> context) {
+    LOG.info("v1: CRaC's beforeCheckpoint callback method called...");
+    LOG.info("- Shutting down the MongoClient...");
+    mongoClient.close();
+    LOG.info("- MongoClient closed.");
+
+  }
+
+  @Override
+  public void afterRestore(Context<? extends Resource> context) {
+    LOG.info("v1: CRaC's afterRestore callback method called...");
   }
 }

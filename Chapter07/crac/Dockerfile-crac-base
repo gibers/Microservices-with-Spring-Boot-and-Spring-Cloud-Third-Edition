@@ -1,0 +1,5 @@
+FROM azul/zulu-openjdk:21.0.5-21.38-jdk-crac
+COPY build/libs/*.jar app.jar
+
+# The file must exist while performing the checkpoint
+RUN touch runtime-configuration.yml

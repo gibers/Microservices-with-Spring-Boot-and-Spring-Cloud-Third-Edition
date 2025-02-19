@@ -1,51 +1,61 @@
 services:
-  product:
-    build: microservices/product-service
-    image: hands-on/product-service
+  product-prod:
+    image: hands-on/product-crac
+    cap_add:
+      - CHECKPOINT_RESTORE
     mem_limit: 512m
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+    ports:
+      - "8081:8080"
     depends_on:
       mongodb:
         condition: service_healthy
       kafka:
         condition: service_started
+    volumes:
+      - "./config-repo/prod/product-configuration.yml:/runtime-configuration.yml"
 
-  recommendation:
-    build: microservices/recommendation-service
-    image: hands-on/recommendation-service
+  recommendation-prod:
+    image: hands-on/recommendation-crac
+    cap_add:
+      - CHECKPOINT_RESTORE
     mem_limit: 512m
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+    ports:
+      - "8082:8080"
     depends_on:
       mongodb:
         condition: service_healthy
       kafka:
         condition: service_started
+    volumes:
+      - "./config-repo/prod/recommendation-configuration.yml:/runtime-configuration.yml"
 
-  review:
-    build: microservices/review-service
-    image: hands-on/review-service
+  review-prod:
+    image: hands-on/review-crac
+    cap_add:
+      - CHECKPOINT_RESTORE
     mem_limit: 512m
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,streaming_instance_0,kafka
+    ports:
+      - "8083:8080"
     depends_on:
       mysql:
         condition: service_healthy
       kafka:
         condition: service_started
+    volumes:
+      - "./config-repo/prod/review-configuration.yml:/runtime-configuration.yml"
 
-  product-composite:
-    build: microservices/product-composite-service
-    image: hands-on/product-composite-service
+  product-composite-prod:
+    image: hands-on/product-composite-crac
+    cap_add:
+      - CHECKPOINT_RESTORE
     mem_limit: 512m
     ports:
       - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,kafka
     depends_on:
       kafka:
         condition: service_started
+    volumes:
+      - "./config-repo/prod/product-composite-configuration.yml:/runtime-configuration.yml"
 
   mongodb:
     image: mongo:6.0.4
@@ -66,14 +76,16 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=rootpwd
-      - MYSQL_DATABASE=review-db
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=pwd
+      - MYSQL_DATABASE=review-db-prod
+      - MYSQL_USER=user-prod
+      - MYSQL_PASSWORD=pwd-prod
     healthcheck:
-      test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
+      test: "/usr/bin/mysql --user=user-prod --password=pwd-prod --execute \"SHOW DATABASES;\""
       interval: 5s
       timeout: 2s
       retries: 60
+    volumes:
+      - "./sql-scripts/create-tables.sql:/docker-entrypoint-initdb.d/create-tables.sql"
 
   kafka:
     image: confluentinc/cp-kafka:7.3.1

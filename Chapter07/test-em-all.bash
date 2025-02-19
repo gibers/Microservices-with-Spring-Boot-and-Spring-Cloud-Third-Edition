@@ -71,7 +71,7 @@ function waitForService() {
       echo " Give up"
       exit 1
     else
-      sleep 3
+      sleep 1
       echo -n ", retry #$n "
     fi
   done
@@ -87,17 +87,15 @@ function testCompositeCreated() {
         return 1
     fi
 
-    set +e
-    assertEqual "$PROD_ID_REVS_RECS" $(echo $RESPONSE | jq .productId)
+    # Run the assertions in a separate subprocess, since they will exit its process on failure
+    (assertEqual "$PROD_ID_REVS_RECS" $(echo $RESPONSE | jq .productId))
     if [ "$?" -eq "1" ] ; then return 1; fi
 
-    assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length")
+    (assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length"))
     if [ "$?" -eq "1" ] ; then return 1; fi
 
-    assertEqual 3 $(echo $RESPONSE | jq ".reviews | length")
+    (assertEqual 3 $(echo $RESPONSE | jq ".reviews | length"))
     if [ "$?" -eq "1" ] ; then return 1; fi
-
-    set -e
 }
 
 function waitForMessageProcessing() {
@@ -115,8 +113,8 @@ function waitForMessageProcessing() {
             echo " Give up"
             exit 1
         else
-            sleep 6
-            echo -n ", retry #$n "
+            sleep 3
+            echo "...retry #$n "
         fi
     done
     echo "All messages are now processed!"
@@ -183,6 +181,7 @@ then
 fi
 
 waitForService curl http://$HOST:$PORT/actuator/health
+
 setupTestdata
 
 waitForMessageProcessing

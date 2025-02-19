@@ -1,0 +1,5 @@
+FROM crac-base
+COPY checkpoint checkpoint
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-XX:CRaCRestoreFrom=checkpoint"]
