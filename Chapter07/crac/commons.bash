@@ -32,8 +32,6 @@ function buildCracImage() {
   echo "Running warmup script $warmupScript..."
   $warmupScript
 
-  docker logs crac-build | grep "Started "
-
   echo "Checkpoint $serviceName..."
   docker exec crac-build jcmd app.jar JDK.checkpoint
 

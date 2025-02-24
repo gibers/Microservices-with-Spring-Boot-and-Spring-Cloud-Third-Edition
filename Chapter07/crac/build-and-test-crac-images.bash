@@ -48,6 +48,10 @@ docker compose build
 log "Startup training landscape and populate with test data..."
 docker compose up -d
 $SCRIPT_DIR/../test-em-all.bash
+
+echo "Startup times for jar-based microservices:"
+docker compose logs | grep "process running for"
+
 docker compose rm -fs product-composite
 
 
@@ -71,6 +75,8 @@ $SCRIPT_DIR/../test-em-all.bash
 
 docker compose logs | grep "CRaC's afterRestore callback method called..."
 docker compose logs | grep "Refreshed keys"
+
+echo "Startup times for CRaC-based microservices:"
 docker compose logs | grep "restart completed"
 docker compose down
 unset COMPOSE_FILE
