@@ -73,7 +73,7 @@ class MessagingTests {
 
     Event<Integer, Product> expectedEvent =
       new Event(CREATE, composite.getProductId(), new Product(composite.getProductId(), composite.getName(), composite.getWeight(), null));
-    assertThat(productMessages.get(0), is(sameEventExceptCreatedAt(expectedEvent)));
+    assertThat(productMessages.get(0), sameEventExceptCreatedAt(expectedEvent));
 
     // Assert no recommendation and review events
     assertEquals(0, recommendationMessages.size());
@@ -97,7 +97,7 @@ class MessagingTests {
 
     Event<Integer, Product> expectedProductEvent =
       new Event(CREATE, composite.getProductId(), new Product(composite.getProductId(), composite.getName(), composite.getWeight(), null));
-    assertThat(productMessages.get(0), is(sameEventExceptCreatedAt(expectedProductEvent)));
+    assertThat(productMessages.get(0), sameEventExceptCreatedAt(expectedProductEvent));
 
     // Assert one create recommendation event queued up
     assertEquals(1, recommendationMessages.size());
@@ -106,7 +106,7 @@ class MessagingTests {
     Event<Integer, Product> expectedRecommendationEvent =
       new Event(CREATE, composite.getProductId(),
         new Recommendation(composite.getProductId(), rec.getRecommendationId(), rec.getAuthor(), rec.getRate(), rec.getContent(), null));
-    assertThat(recommendationMessages.get(0), is(sameEventExceptCreatedAt(expectedRecommendationEvent)));
+    assertThat(recommendationMessages.get(0), sameEventExceptCreatedAt(expectedRecommendationEvent));
 
     // Assert one create review event queued up
     assertEquals(1, reviewMessages.size());
@@ -114,7 +114,7 @@ class MessagingTests {
     ReviewSummary rev = composite.getReviews().get(0);
     Event<Integer, Product> expectedReviewEvent =
       new Event(CREATE, composite.getProductId(), new Review(composite.getProductId(), rev.getReviewId(), rev.getAuthor(), rev.getSubject(), rev.getContent(), null));
-    assertThat(reviewMessages.get(0), is(sameEventExceptCreatedAt(expectedReviewEvent)));
+    assertThat(reviewMessages.get(0), sameEventExceptCreatedAt(expectedReviewEvent));
   }
 
   @Test

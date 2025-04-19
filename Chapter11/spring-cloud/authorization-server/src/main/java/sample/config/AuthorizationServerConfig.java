@@ -35,6 +35,7 @@ import org.springframework.security.oauth2.server.authorization.authentication.*
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import sample.jose.Jwks;
 
@@ -78,8 +79,7 @@ public class AuthorizationServerConfig {
     // Register a custom redirect_uri validator, that allows redirect uris based on https://localhost during development
     authorizationServerConfigurer
       .authorizationEndpoint(authorizationEndpoint ->
-        authorizationEndpoint
-          .authenticationProviders(configureAuthenticationValidator())
+        authorizationEndpoint.authenticationProviders(configureAuthenticationValidator())
       );
 
     RequestMatcher endpointsMatcher = authorizationServerConfigurer

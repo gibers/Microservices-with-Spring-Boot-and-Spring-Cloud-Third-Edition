@@ -16,16 +16,16 @@ public class SecurityConfig {
   SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     http
       .authorizeExchange()
-        .pathMatchers("/openapi/**").permitAll()
-        .pathMatchers("/webjars/**").permitAll()
-        .pathMatchers("/actuator/**").permitAll()
-        .pathMatchers(POST, "/product-composite/**").hasAuthority("SCOPE_product:write")
-        .pathMatchers(DELETE, "/product-composite/**").hasAuthority("SCOPE_product:write")
-        .pathMatchers(GET, "/product-composite/**").hasAuthority("SCOPE_product:read")
-        .anyExchange().authenticated()
-        .and()
+      .pathMatchers("/openapi/**").permitAll()
+      .pathMatchers("/webjars/**").permitAll()
+      .pathMatchers("/actuator/**").permitAll()
+      .pathMatchers(POST, "/product-composite/**").hasAuthority("SCOPE_product:write")
+      .pathMatchers(DELETE, "/product-composite/**").hasAuthority("SCOPE_product:write")
+      .pathMatchers(GET, "/product-composite/**").hasAuthority("SCOPE_product:read")
+      .anyExchange().authenticated()
+      .and()
       .oauth2ResourceServer()
-        .jwt();
+      .jwt();
     return http.build();
   }
 }

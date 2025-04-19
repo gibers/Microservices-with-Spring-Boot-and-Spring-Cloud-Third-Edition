@@ -28,10 +28,10 @@ public class SecurityConfig {
   @Bean
   public InMemoryUserDetailsManager userDetailsService() {
     UserDetails user = User.withDefaultPasswordEncoder()
-        .username(username)
-        .password(password)
-        .roles("USER")
-        .build();
+      .username(username)
+      .password(password)
+      .roles("USER")
+      .build();
     return new InMemoryUserDetailsManager(user);
   }
 
@@ -40,11 +40,11 @@ public class SecurityConfig {
     http
       // Disable CRCF to allow services to register themselves with Eureka
       .csrf()
-        .disable()
+      .disable()
       .authorizeRequests()
-        .anyRequest().authenticated()
-        .and()
-        .httpBasic();
+      .anyRequest().authenticated()
+      .and()
+      .httpBasic();
     return http.build();
   }
 }

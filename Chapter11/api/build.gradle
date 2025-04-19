@@ -5,14 +5,14 @@ plugins {
 
 group = 'se.magnus.microservices.api'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '21'
 
 repositories {
     mavenCentral()
 }
 
 ext {
-    springBootVersion = '3.0.4'
+    springBootVersion = '3.4.3'
 }
 
 dependencies {
