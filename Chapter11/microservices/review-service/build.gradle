@@ -10,7 +10,7 @@ sourceCompatibility = '21'
 
 ext {
     mapstructVersion = "1.5.3.Final"
-    springCloudVersion = "2022.0.1"
+    springCloudVersion = "2024.0.1"
 }
 
 repositories {

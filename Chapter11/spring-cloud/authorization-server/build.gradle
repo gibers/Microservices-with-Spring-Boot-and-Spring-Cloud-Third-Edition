@@ -13,7 +13,7 @@ repositories {
 }
 
 ext {
-    springCloudVersion = "2022.0.1"
+    springCloudVersion = "2024.0.1"
 }
 
 dependencies {
@@ -21,11 +21,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-    implementation "org.springframework.security:spring-security-oauth2-authorization-server:1.0.0"
+    implementation 'org.springframework.security:spring-security-oauth2-authorization-server:1.4.2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'net.sourceforge.htmlunit:htmlunit'
+    testImplementation 'net.sourceforge.htmlunit:htmlunit:2.70.0'
 }
 
 dependencyManagement {

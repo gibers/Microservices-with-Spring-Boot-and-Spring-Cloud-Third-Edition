@@ -255,3 +255,71 @@ then
 fi
 
 echo "End, all tests OK:" `date`
+
+
+# 8443 => gateway
+# 8761 => eureka
+
+curl -H "accept:application/json" https://u:p@localhost:8443/eureka/api/apps -ks | jq -r .applications.application[].instance[].instanceId
+
+# client credentials grant flow
+curl -k https://writer:secret-writer@localhost:8443/oauth2/token -d grant_type=client_credentials -d scope="product:read product:write" -s | jq .
+curl -k https://reader:secret-reader@localhost:8443/oauth2/token -d grant_type=client_credentials -d scope="product:read" -s | jq .
+
+# code grant flow for reader
+https://localhost:8443/oauth2/authorize?response_type=code&client_id=reader&redirect_uri=https://my.redirect.uri&scope=product:read&state=35725
+https://my.redirect.uri/?
+code=ovf-s3KIR9_jw0jKbqZopJ118stufIC3S1xXWtrAzX6k0IJZUE_K_a-lAtUfGdRbnLHT0i1ViDCSfsLDOglAyAwWMzMYPM1vuiFgSJ8mKDqtzXHkvI2b9KzWFhj1OB0R
+&state=35725
+
+CODE=PA3VYznHKbwZrSSHAyRy-bWAdSJj-cRUouZu3GoTu-OCC6HUmbPIlAiMH0mSAd8AHOMxf3xycKemTrBTPVWPjhDs0yBFC6608O0fbhz5gACcT64GLw7x622mmHR9W5VU
+curl -k https://reader:secret-reader@localhost:8443/oauth2/token \
+ -d grant_type=authorization_code \
+ -d client_id=reader \
+ -d redirect_uri=https://my.redirect.uri \
+ -d code=$CODE -s | jq .
+
+
+{
+  "access_token": "eyJraWQiOiJmZDE5NWJjNS04OWM5LTQ4ZmQtYjYzMS1lNjU5MDA4Mjc2OWIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1IiwiYXVkIjoicmVhZGVyIiwibmJmIjoxNzQ1MzEwNjcxLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXSwiaXNzIjoiaHR0cDovL2F1dGgtc2VydmVyOjk5OTkiLCJleHAiOjE3NDUzMTQyNzEsImlhdCI6MTc0NTMxMDY3MX0.SAqKCJNWj1QXjvv-mTCaFuvsriwVnhOmSOJSIHcg4u271pIzTYsbSNgxH_YRPuJ9jaX_DD56mlDOIrN5lLGKqzgxCVnt4weLu39S4wYVsSRA1Zy-O_CQDUYfm_tAZJnlaKesfPsmRrYXJQdXa8fznxFqAtj-NvklOy6bHjJ6iqaYCyIDvT0SEu17z5XV4VQDGhcPpFo-MmJUVjN43I-ljXN-gOrWbIS_jIuFbD8NHVpP8NvneFnOd1OPGCEnEdY1oFo9LFzNPz8bxS_FM6o6fGZVem_7znjDymfudZrydFIQNXcgyA2uzgDHkq6VvmN_UddtADEqkq-DrOJJPFZRaQ",
+  "refresh_token": "e6_kHbjkD2wh6oiMq8Sv2XCivwttiEZ5GmoYCBOXZxlpGBrXHZlIGgrSTJzC_hVWUChMGS7jS_xDIWYXqrBLNqeOVpJVNdq219Y9FzjR7xwUHMbYYsdt8UBDoefOePGG",
+  "scope": "product:read",
+  "token_type": "Bearer",
+  "expires_in": 3599
+}
+
+# code grant flow for writer
+https://localhost:8443/oauth2/authorize?response_type=code&client_id=writer&redirect_uri=https://my.redirect.uri&scope=product:read+product:write&state=72489
+https://my.redirect.uri/?code=mfatnPnmF_rqkNcRhTVqJwuzaQR915BPffuxMykEb6hU_1AK63enB8mKm4VZOT86Ci6_oh04NPi5WDCKcENC4J7K8TR7vLp9ZclxJbpWBS0EDCIH4sUwnPPw-AdBUiN3
+&state=72489
+
+CODE=KZmW7_QY8W2nbrjr8NOpf3t06cz-ixLATqxB3va9mDpyrIQ7Jn4-WdOK8DdaWuFaWNva9lKLjbAhh_c-Rqk8U9eRVzQRrE74PkWUw37pKu-VVpCgPa2_7pha8UwNbFpX
+curl -k https://writer:secret-writer@localhost:8443/oauth2/token \
+  -d grant_type=authorization_code \
+  -d client_id=writer \
+  -d redirect_uri=https://my.redirect.uri \
+  -d code=$CODE -s | jq .
+
+{
+  "access_token": "eyJraWQiOiJmZDE5NWJjNS04OWM5LTQ4ZmQtYjYzMS1lNjU5MDA4Mjc2OWIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1IiwiYXVkIjoid3JpdGVyIiwibmJmIjoxNzQ1MzEyMTQ1LCJzY29wZSI6WyJwcm9kdWN0OndyaXRlIiwicHJvZHVjdDpyZWFkIl0sImlzcyI6Imh0dHA6Ly9hdXRoLXNlcnZlcjo5OTk5IiwiZXhwIjoxNzQ1MzE1NzQ1LCJpYXQiOjE3NDUzMTIxNDV9.IsfiN9OsH3XWYsdXiG1jDhlnzuk0OVO5GGUagVUWgWSaPfNVnbsLPzFyRgeliAnGvPZi8CV0t4KoegGCS9tLEmu1vFrvQPpeSjIpCD8KNb5l2eVP1oXIYJrcgzLhdkeJ-EcJ9LTKa3oiuIMKiLCne49uuIAaTUR0nisU_3gADNaMrBWkGX1D6uuNYEYI3iz6CHPvSZjUiTLApvOHubT80WZRKf8r1PGDBCx0rlT4cjxe5ucXHIWRhFT5ZXyDbbjEDcpwEQb1Jgz5pwbl9Dzxm1Z9Dsp3yj7A6eE3hTn7WFjq6ufHv__kWUBSp8RP3s2lZuWI3nOu_GLJaknAYGnHJg",
+  "refresh_token": "k5R05eKRky5v91IUaDluqDg1WzeLZY3k89v7wxs1r8j-wu-DKasT5OrWlfTXF1dzVV9zbXYyVGO4GQAmBmR2Y6KBQwLzbPb0fYyqSvZgsLDWP3TyvvdYyXTYLmN7Gyna",
+  "scope": "product:write product:read",
+  "token_type": "Bearer",
+  "expires_in": 3599
+}
+
+# invalid access
+ACCESS_TOKEN=an-invalid-token
+curl https://localhost:8443/product-composite/1 -k -H "Authorization: Bearer $ACCESS_TOKEN" -i
+
+# valid access_token
+ACCESS_TOKEN=eyJraWQiOiJmZDE5NWJjNS04OWM5LTQ4ZmQtYjYzMS1lNjU5MDA4Mjc2OWIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1IiwiYXVkIjoicmVhZGVyIiwibmJmIjoxNzQ1MzEwNjcxLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXSwiaXNzIjoiaHR0cDovL2F1dGgtc2VydmVyOjk5OTkiLCJleHAiOjE3NDUzMTQyNzEsImlhdCI6MTc0NTMxMDY3MX0.SAqKCJNWj1QXjvv-mTCaFuvsriwVnhOmSOJSIHcg4u271pIzTYsbSNgxH_YRPuJ9jaX_DD56mlDOIrN5lLGKqzgxCVnt4weLu39S4wYVsSRA1Zy-O_CQDUYfm_tAZJnlaKesfPsmRrYXJQdXa8fznxFqAtj-NvklOy6bHjJ6iqaYCyIDvT0SEu17z5XV4VQDGhcPpFo-MmJUVjN43I-ljXN-gOrWbIS_jIuFbD8NHVpP8NvneFnOd1OPGCEnEdY1oFo9LFzNPz8bxS_FM6o6fGZVem_7znjDymfudZrydFIQNXcgyA2uzgDHkq6VvmN_UddtADEqkq-DrOJJPFZRaQ
+curl https://localhost:8443/product-composite/1 -k -H "Authorization: Bearer $ACCESS_TOKEN" -i
+
+curl https://localhost:8443/product-composite/999 -k -H "Authorization: Bearer $ACCESS_TOKEN" -X DELETE -i
+
+
+# Pour le swagger-ui
+https://localhost:8443/openapi/swagger-ui/index.html
+
+
